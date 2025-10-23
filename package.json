@@ -1,12 +1,11 @@
 {
-	"name": "obsidian-latex-suite",
-	"version": "1.9.8",
+	"name": "latex-suite-core",
+	"version": "0.0.1",
 	"description": "Make typesetting LaTeX math as fast as handwriting through snippets, text expansion, and editor enhancements",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
-		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-		"version": "node version-bump.mjs && git add manifest.json versions.json"
+		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
 	},
 	"keywords": [],
 	"author": "",
@@ -31,7 +30,6 @@
 		"esbuild-plugin-inline-import": "^1.0.2",
 		"eslint": "^8.56.0",
 		"js-base64": "^3.7.5",
-		"obsidian": "^0.15.0",
 		"tslib": "2.3.1",
 		"typescript": "^5.3.3"
 	},

@@ -18,8 +18,6 @@ const args = {
 	entryPoints: ["src/main.ts"],
 	bundle: true,
 	external: [
-		"obsidian",
-		"electron",
 		"@codemirror/autocomplete",
 		"@codemirror/closebrackets",
 		"@codemirror/collab",

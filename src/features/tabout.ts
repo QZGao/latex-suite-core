@@ -18,7 +18,7 @@ export const tabout = (view: EditorView, ctx: Context):boolean => {
 	const rangle = "\\rangle";
 
 	for (let i = pos; i < end; i++) {
-		if (["}", ")", "]", ">", "|", "$"].contains(text.charAt(i))) {
+		if (["}", ")", "]", ">", "|", "$"].includes(text.charAt(i))) {
 			setCursor(view, i+1);
 
 			return true;
@@ -77,7 +77,7 @@ export const shouldTaboutByCloseBracket = (view: EditorView, keyPressed: string)
 	const c = getCharacterAtPos(view, pos);
 	const brackets = [")", "]", "}"];
 
-	if ((c === keyPressed) && brackets.contains(c)) {
+	if ((c === keyPressed) && brackets.includes(c)) {
 		return true;
 	}
 	else {

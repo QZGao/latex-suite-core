@@ -19,6 +19,14 @@
     ]
   },
   "include": [
-    "**/*.ts"
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/settings/file_watch.ts",
+    "src/settings/settings_tab.ts",
+    "src/settings/ui/**",
+    "src/editor_extensions/conceal.ts",
+    "src/editor_extensions/math_tooltip.ts",
+    "src/features/editor_commands.ts"
   ]
 }

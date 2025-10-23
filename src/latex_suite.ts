@@ -13,18 +13,10 @@ import { getLatexSuiteConfig } from "./snippets/codemirror/config";
 import { clearSnippetQueue } from "./snippets/codemirror/snippet_queue_state_field";
 import { handleUndoRedo } from "./snippets/codemirror/history";
 
-import { handleMathTooltip } from "./editor_extensions/math_tooltip";
 import { isComposing } from "./utils/editor_utils";
 
 export const handleUpdate = (update: ViewUpdate) => {
-	const settings = getLatexSuiteConfig(update.state);
-
-	// The math tooltip handler is driven by view updates because it utilizes
-	// information about visual line, which is not available in EditorState
-	if (settings.mathPreviewEnabled) {
-		handleMathTooltip(update);
-	}
-
+	// Currently only handles undo/redo integration in CM-only build
 	handleUndoRedo(update);
 }
 
@@ -95,7 +87,7 @@ export const handleKeydown = (key: string, shiftKey: boolean, ctrlKey: boolean, 
 	}
 
 	if (settings.matrixShortcutsEnabled && ctx.mode.strictlyInMath()) {
-		if (["Tab", "Enter"].contains(key)) {
+		if (["Tab", "Enter"].includes(key)) {
 			success = runMatrixShortcuts(view, ctx, key, shiftKey);
 
 			if (success) return true;

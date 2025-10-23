@@ -32,7 +32,7 @@ export class Context {
 		const inCode = codeblockLanguage !== null;
 
 		const settings = getLatexSuiteConfig(state);
-		const forceMath = settings.forceMathLanguages.contains(codeblockLanguage);
+		const forceMath = settings.forceMathLanguages.includes(codeblockLanguage);
 		ctx.mode.codeMath = forceMath;
 		ctx.mode.code = inCode && !forceMath;
 		if (ctx.mode.code) ctx.codeblockLanguage = codeblockLanguage;
@@ -80,7 +80,7 @@ export class Context {
 		let offset;
 		let openSearchSymbol;
 
-		if (["{", "[", "("].contains(openBracket) && env.closeSymbol === closeBracket) {
+		if (["{", "[", "("].includes(openBracket) && env.closeSymbol === closeBracket) {
 			offset = env.openSymbol.length - 1;
 			openSearchSymbol = openBracket;
 		} else {
@@ -159,11 +159,11 @@ const isWithinEquation = (state: EditorState):boolean => {
 	const tree = syntaxTree(state);
 
 	let syntaxNode = tree.resolveInner(pos, -1);
-	if (syntaxNode.name.contains("math-end")) return false;
+	if (syntaxNode.name.includes("math-end")) return false;
 
 	if (!syntaxNode.parent) {
 		syntaxNode = tree.resolveInner(pos, 1);
-		if (syntaxNode.name.contains("math-begin")) return false;
+		if (syntaxNode.name.includes("math-begin")) return false;
 	}
 
 	// Account/allow for being on an empty line in a equation
@@ -171,10 +171,10 @@ const isWithinEquation = (state: EditorState):boolean => {
 		const left = tree.resolveInner(pos - 1, -1);
 		const right = tree.resolveInner(pos + 1, 1);
 
-		return (left.name.contains("math") && right.name.contains("math") && !(left.name.contains("math-end")));
+		return (left.name.includes("math") && right.name.includes("math") && !(left.name.includes("math-end")));
 	}
 
-	return (syntaxNode.name.contains("math") && !syntaxNode.name.contains("hashtag_hashtag-end_meta_tag"));
+	return (syntaxNode.name.includes("math") && !syntaxNode.name.includes("hashtag_hashtag-end_meta_tag"));
 }
 
 const isWithinInlineEquation = (state: EditorState):boolean => {
@@ -182,11 +182,11 @@ const isWithinInlineEquation = (state: EditorState):boolean => {
 	const tree = syntaxTree(state);
 
 	let syntaxNode = tree.resolveInner(pos, -1);
-	if (syntaxNode.name.contains("math-end")) return false;
+	if (syntaxNode.name.includes("math-end")) return false;
 
 	if (!syntaxNode.parent) {
 		syntaxNode = tree.resolveInner(pos, 1);
-		if (syntaxNode.name.contains("math-begin")) return false;
+		if (syntaxNode.name.includes("math-begin")) return false;
 	}
 
 	// Account/allow for being on an empty line in a equation
@@ -195,7 +195,7 @@ const isWithinInlineEquation = (state: EditorState):boolean => {
 	const cursor = syntaxNode.cursor();
 	const res = escalateToToken(cursor, Direction.Backward, "math-begin");
 
-	return !res?.name.contains("math-block");
+	return !res?.name.includes("math-block");
 }
 
 /**
@@ -288,7 +288,7 @@ const langIfWithinCodeblock = (state: EditorState): string | null => {
 		: tree.cursorAt(pos, -1);
 
 	// check if we're in a codeblock atm at all
-	const inCodeblock = cursor.name.contains("codeblock");
+	const inCodeblock = cursor.name.includes("codeblock");
 	if (!inCodeblock) {
 		return null;
 	}

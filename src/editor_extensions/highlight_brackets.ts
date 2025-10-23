@@ -23,7 +23,7 @@ function colorPairedBrackets(view: EditorView) {
 			const type = node.type;
 			const to = node.to;
 
-			if (!(type.name.contains("begin") && type.name.contains("math"))) {
+			if (!(type.name.includes("begin") && type.name.includes("math"))) {
 				return;
 			}
 
@@ -43,11 +43,11 @@ function colorPairedBrackets(view: EditorView) {
 			for (let i = 0; i < eqn.length; i++) {
 				const char = eqn.charAt(i);
 
-				if (openBrackets.contains(char)) {
+				if (openBrackets.includes(char)) {
 					bracketsStack.push(char);
 					bracketsPosStack.push(i);
 				}
-				else if (closeBrackets.contains(char)) {
+				else if (closeBrackets.includes(char)) {
 					const lastBracket = bracketsStack.at(-1);
 
 					if (getCloseBracket(lastBracket) === char) {
@@ -86,7 +86,7 @@ function getEnclosingBracketsPos(view: EditorView, pos: number) {
 		let curChar = text.charAt(i);
 
 
-		if ([")", "]", "}"].contains(curChar)) {
+		if ([")", "]", "}"].includes(curChar)) {
 			const closeBracket = curChar;
 			const openBracket = getOpenBracket(closeBracket);
 
@@ -100,7 +100,7 @@ function getEnclosingBracketsPos(view: EditorView, pos: number) {
 		}
 		else {
 
-			if (!["{", "(", "["].contains(curChar)) continue;
+			if (!["{", "(", "["].includes(curChar)) continue;
 
 			const j = findMatchingBracket(text, i, curChar, getCloseBracket(curChar), false);
 			if (j === -1) continue;
@@ -138,12 +138,12 @@ function highlightCursorBrackets(view: EditorView) {
 
 		for (let i = range.to; i > range.from - 2; i--) {
 			const char = text.charAt(i);
-			if (!brackets.contains(char)) continue;
+			if (!brackets.includes(char)) continue;
 
 			let openBracket, closeBracket;
 			let backwards = false;
 
-			if (openBrackets.contains(char)) {
+			if (openBrackets.includes(char)) {
 				openBracket = char;
 				closeBracket = getCloseBracket(openBracket);
 			}

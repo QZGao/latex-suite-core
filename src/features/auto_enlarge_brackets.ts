@@ -51,7 +51,7 @@ export const autoEnlargeBrackets = (view: EditorView) => {
 
 		// Check whether the brackets contain sum, int or frac
 		const bracketContents = text.slice(i+1, j);
-		const containsTrigger = settings.autoEnlargeBracketsTriggers.some(word => bracketContents.contains("\\" + word));
+		const containsTrigger = settings.autoEnlargeBracketsTriggers.some(word => bracketContents.includes("\\" + word));
 
 		if (!containsTrigger) {
 			i = j;

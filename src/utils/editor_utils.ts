@@ -1,4 +1,3 @@
-import { Platform } from "obsidian";
 import { EditorView } from "@codemirror/view";
 import { SyntaxNode, TreeCursor } from "@lezer/common";
 import { EditorState } from "@codemirror/state";
@@ -35,7 +34,9 @@ export function setSelection(view: EditorView, start: number, end: number) {
 
 
 export function resetCursorBlink() {
-	if (Platform.isMobile) return;
+	// Basic mobile detection without Obsidian Platform dependency
+	const isMobile = typeof navigator !== "undefined" && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+	if (isMobile) return;
 
 	const cursorLayer = document.getElementsByClassName("cm-cursorLayer")[0] as HTMLElement;
 
@@ -110,7 +111,7 @@ export enum Direction {
   */
 export function escalateToToken(cursor: TreeCursor, dir: Direction, target: string): SyntaxNode | null {
 	// Allow the starting node to be a match
-	if (cursor.name.contains(target)) {
+	if (cursor.name.includes(target)) {
 		return cursor.node;
 	}
 
@@ -120,7 +121,7 @@ export function escalateToToken(cursor: TreeCursor, dir: Direction, target: stri
 		|| (dir == Direction.Forward && cursor.next())
 		|| cursor.parent())
 	) {
-		if (cursor.name.contains(target)) {
+		if (cursor.name.includes(target)) {
 			return cursor.node;
 		}
 	}
