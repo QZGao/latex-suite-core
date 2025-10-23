@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>latex-suite-core demo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <style>
+      html, body { height: 100%; margin: 0; }
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+      #app { height: 100%; display: grid; grid-template-columns: 1fr; gap: 16px; padding: 16px; box-sizing: border-box; }
+      @media (min-width: 900px) { #app { grid-template-columns: 1fr 1fr; } }
+      .panel { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; height: calc(100vh - 64px); }
+      #editor { height: 100%; }
+      #preview { padding: 12px; overflow: auto; height: 100%; background: #fff; }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="editor" class="panel"></div>
+      <div id="preview" class="panel" aria-label="KaTeX Preview"></div>
+    </div>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script type="module" src="./dist/app.js"></script>
+  </body>
+</html>
