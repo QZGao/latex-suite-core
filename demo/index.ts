@@ -10,7 +10,7 @@ async function start() {
   const snippetVars = await parseSnippetVariables(DEFAULT_SETTINGS.snippetVariables);
   const defaultSnips = await parseSnippets(DEFAULT_SETTINGS.snippets, snippetVars);
   // Make 'ff' work anywhere (text mode) in the demo so Tab expansion is easy to test
-  const demoExtraSnipsSrc = "export default [ { trigger: \"ff\", replacement: \"\\\\frac{$0}{$1}$2\", options: \"t\" } ];";
+  const demoExtraSnipsSrc = "export default [ { trigger: \"ff\", replacement: \"\\\\frac{$0}{$1}$2\", options: \"tA\" } ];";
   const demoExtraSnips = await parseSnippets(demoExtraSnipsSrc, snippetVars);
   const cmSettings = processLatexSuiteSettings([...defaultSnips, ...demoExtraSnips], {
     ...DEFAULT_SETTINGS,
