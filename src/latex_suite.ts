@@ -39,10 +39,10 @@ export const handleKeydown = (key: string, shiftKey: boolean, ctrlKey: boolean, 
 	let success = false;
 
 	/*
-	* When backspace is pressed, if the cursor is inside an empty inline math,
-	* delete both $ symbols, not just the first one.
+	* In the formula-editor fork, allow deleting paired dollars even when the
+	* buffer is not wrapped in a detected math environment.
 	*/
-	if (settings.autoDelete$ && key === "Backspace" && ctx.mode.inMath()) {
+	if (settings.autoDelete$ && key === "Backspace") {
 		const charAtPos = getCharacterAtPos(view, ctx.pos);
 		const charAtPrevPos = getCharacterAtPos(view, ctx.pos - 1);
 
@@ -78,7 +78,7 @@ export const handleKeydown = (key: string, shiftKey: boolean, ctrlKey: boolean, 
 		if (success) return true;
 	}
 
-	if (settings.autofractionEnabled && ctx.mode.strictlyInMath()) {
+	if (settings.autofractionEnabled) {
 		if (key === "/") {
 			success = runAutoFraction(view, ctx);
 
@@ -86,7 +86,7 @@ export const handleKeydown = (key: string, shiftKey: boolean, ctrlKey: boolean, 
 		}
 	}
 
-	if (settings.matrixShortcutsEnabled && ctx.mode.strictlyInMath()) {
+	if (settings.matrixShortcutsEnabled) {
 		if (["Tab", "Enter"].includes(key)) {
 			success = runMatrixShortcuts(view, ctx, key, shiftKey);
 

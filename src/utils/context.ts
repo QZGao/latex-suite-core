@@ -61,8 +61,6 @@ export class Context {
 	}
 
 	isWithinEnvironment(pos: number, env: Environment): boolean {
-		if (!this.mode.inMath()) return false;
-
 		const bounds = this.getInnerBounds();
 		if (!bounds) return;
 
@@ -131,8 +129,10 @@ export class Context {
 		if (this.mode.codeMath) {
 			// means a codeblock language triggered the math mode -> use the codeblock bounds instead
 			bounds = getCodeblockBounds(this.state, pos);
+		} else if (this.mode.inMath()) {
+			bounds = getEquationBounds(this.state, pos);
 		} else {
-			bounds = getEquationBounds(this.state);
+			bounds = { start: 0, end: this.state.doc.length };
 		}
 
 		this.boundsCache.set(pos, bounds);
@@ -145,8 +145,10 @@ export class Context {
 		if (this.mode.codeMath) {
 			// means a codeblock language triggered the math mode -> use the codeblock bounds instead
 			bounds = getCodeblockBounds(this.state, pos);
+		} else if (this.mode.inMath()) {
+			bounds = getInnerEquationBounds(this.state, pos);
 		} else {
-			bounds = getInnerEquationBounds(this.state);
+			bounds = { start: 0, end: this.state.doc.length };
 		}
 
 		return bounds;

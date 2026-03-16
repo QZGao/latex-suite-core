@@ -6,6 +6,7 @@ import { tabout } from "src/features/tabout";
 
 export const runMatrixShortcuts = (view: EditorView, ctx: Context, key: string, shiftKey: boolean): boolean => {
 	const settings = getLatexSuiteConfig(view);
+	const isBlockLike = ctx.mode.blockMath || view.state.doc.toString().includes("\n");
 
 	// Check whether we are inside a matrix / align / case environment
 	let isInsideAnEnv = false;
@@ -26,7 +27,7 @@ export const runMatrixShortcuts = (view: EditorView, ctx: Context, key: string, 
 		return true;
 	}
 	else if (key === "Enter") {
-		if (shiftKey && ctx.mode.blockMath) {
+		if (shiftKey && isBlockLike) {
 			// Move cursor to end of next line
 			const d = view.state.doc;
 
@@ -35,10 +36,10 @@ export const runMatrixShortcuts = (view: EditorView, ctx: Context, key: string, 
 
 			setCursor(view, nextLine.to);
 		}
-		else if (shiftKey && ctx.mode.inlineMath) {
+		else if (shiftKey) {
 			tabout(view, ctx);
 		}
-		else if (ctx.mode.blockMath) {
+		else if (isBlockLike) {
 			const d = view.state.doc;
 			const lineText = d.lineAt(ctx.pos).text;
 			const matchIndents = lineText.match(/^\s*/);

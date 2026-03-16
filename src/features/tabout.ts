@@ -4,8 +4,6 @@ import { Context } from "src/utils/context";
 
 
 export const tabout = (view: EditorView, ctx: Context):boolean => {
-    if (!ctx.mode.inMath()) return false;
-
 	const result = ctx.getBounds();
 	if (!result) return false;
 	const end = result.end;
@@ -45,7 +43,7 @@ export const tabout = (view: EditorView, ctx: Context):boolean => {
 	if (ctx.mode.inlineMath || ctx.mode.codeMath) {
 		setCursor(view, end + 1);
 	}
-	else {
+	else if (ctx.mode.blockMath) {
 		// First, locate the $$ symbol
 		const dollarLine = d.lineAt(end+2);
 
@@ -63,6 +61,9 @@ export const tabout = (view: EditorView, ctx: Context):boolean => {
 		const line = d.lineAt(pos);
 		replaceRange(view, line.from, line.to, line.text.trim());
 
+	}
+	else {
+		return false;
 	}
 
 	return true;

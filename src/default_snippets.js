@@ -102,8 +102,8 @@
     {trigger: "ooo", replacement: "\\infty", options: "tA"},
 	{trigger: "sum", replacement: "\\sum", options: "tA"},
 	{trigger: "prod", replacement: "\\prod", options: "tA"},
-	{trigger: "\\sum", replacement: "\\sum_{${0:i}=${1:1}}^{${2:N}} $3", options: "m"},
-	{trigger: "\\prod", replacement: "\\prod_{${0:i}=${1:1}}^{${2:N}} $3", options: "m"},
+	{trigger: "\\sum", replacement: "\\sum_{${0:i}=${1:1}}^{${2:N}} $3", options: "t"},
+	{trigger: "\\prod", replacement: "\\prod_{${0:i}=${1:1}}^{${2:N}} $3", options: "t"},
     {trigger: "lim", replacement: "\\lim_{ ${0:n} \\to ${1:\\infty} } $2", options: "tA"},
     {trigger: "+-", replacement: "\\pm", options: "tA"},
 	{trigger: "-+", replacement: "\\mp", options: "tA"},
@@ -173,12 +173,12 @@
 
 
     // Derivatives and integrals
-    {trigger: "par", replacement: "\\frac{ \\partial ${0:y} }{ \\partial ${1:x} } $2", options: "m"},
-    {trigger: /pa([A-Za-z])([A-Za-z])/, replacement: "\\frac{ \\partial [[0]] }{ \\partial [[1]] } ", options: "rm"},
+    {trigger: "par", replacement: "\\frac{ \\partial ${0:y} }{ \\partial ${1:x} } $2", options: "t"},
+    {trigger: /pa([A-Za-z])([A-Za-z])/, replacement: "\\frac{ \\partial [[0]] }{ \\partial [[1]] } ", options: "rt"},
     {trigger: "ddt", replacement: "\\frac{d}{dt} ", options: "tA"},
 
     {trigger: /([^\\])int/, replacement: "[[0]]\\int", options: "tA", priority: -1},
-    {trigger: "\\int", replacement: "\\int $0 \\, d${1:x} $2", options: "m"},
+    {trigger: "\\int", replacement: "\\int $0 \\, d${1:x} $2", options: "t"},
     {trigger: "dint", replacement: "\\int_{${0:0}}^{${1:1}} $2 \\, d${3:x} $4", options: "tA"},
     {trigger: "oint", replacement: "\\oint", options: "tA"},
 	{trigger: "iint", replacement: "\\iint", options: "tA"},

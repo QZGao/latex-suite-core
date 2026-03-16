@@ -14,8 +14,45 @@ function getHighlightBracketMark(pos: number, className: string):Range<Decoratio
 	}).range(pos, pos+1);
 }
 
+function addBracketDecorations(view: EditorView, bounds: { start: number; end: number }, widgets: Range<Decoration>[]) {
+	const eqn = view.state.doc.sliceString(bounds.start, bounds.end);
+
+	const openBrackets = ["{", "[", "("];
+	const closeBrackets = ["}", "]", ")"];
+
+	const bracketsStack = [];
+	const bracketsPosStack = [];
+
+	for (let i = 0; i < eqn.length; i++) {
+		const char = eqn.charAt(i);
+
+		if (openBrackets.includes(char)) {
+			bracketsStack.push(char);
+			bracketsPosStack.push(i);
+		}
+		else if (closeBrackets.includes(char)) {
+			const lastBracket = bracketsStack.at(-1);
+
+			if (getCloseBracket(lastBracket) === char) {
+				bracketsStack.pop();
+				const lastBracketPos = bracketsPosStack.pop();
+				const depth = bracketsStack.length % Ncolors;
+
+				const className = "latex-suite-color-bracket-" + depth;
+
+				const j = lastBracketPos + bounds.start;
+				const k = i + bounds.start;
+
+				widgets.push(getHighlightBracketMark(j, className));
+				widgets.push(getHighlightBracketMark(k, className));
+			}
+		}
+	}
+}
+
 function colorPairedBrackets(view: EditorView) {
 	const widgets: Range<Decoration>[] = [];
+	let foundDetectedMath = false;
 
 	for (const { from, to } of view.visibleRanges) {
 
@@ -26,57 +63,27 @@ function colorPairedBrackets(view: EditorView) {
 			if (!(type.name.includes("begin") && type.name.includes("math"))) {
 				return;
 			}
+			foundDetectedMath = true;
 
 			const bounds = getEquationBounds(view.state, to);
 			if (!bounds) return;
-
-
-			const eqn = view.state.doc.sliceString(bounds.start, bounds.end);
-
-
-			const openBrackets = ["{", "[", "("];
-			const closeBrackets = ["}", "]", ")"];
-
-			const bracketsStack = [];
-			const bracketsPosStack = [];
-
-			for (let i = 0; i < eqn.length; i++) {
-				const char = eqn.charAt(i);
-
-				if (openBrackets.includes(char)) {
-					bracketsStack.push(char);
-					bracketsPosStack.push(i);
-				}
-				else if (closeBrackets.includes(char)) {
-					const lastBracket = bracketsStack.at(-1);
-
-					if (getCloseBracket(lastBracket) === char) {
-						bracketsStack.pop();
-						const lastBracketPos = bracketsPosStack.pop();
-						const depth = bracketsStack.length % Ncolors;
-
-						const className = "latex-suite-color-bracket-" + depth;
-
-						const j = lastBracketPos + bounds.start;
-						const k = i + bounds.start;
-
-						widgets.push(getHighlightBracketMark(j, className));
-						widgets.push(getHighlightBracketMark(k, className));
-					}
-				}
-			}
+			addBracketDecorations(view, bounds, widgets);
 
 		}
 
 		});
 	}
 
+	if (!foundDetectedMath) {
+		addBracketDecorations(view, { start: 0, end: view.state.doc.length }, widgets);
+	}
+
 	return Decoration.set(widgets, true)
 }
 
 function getEnclosingBracketsPos(view: EditorView, pos: number) {
-
-	const result = getEquationBounds(view.state);
+	const ctx = Context.fromView(view);
+	const result = ctx.getBounds(pos);
 	if (!result) return -1;
 	const {start, end} = result;
 	const text = view.state.doc.sliceString(start, end);
@@ -120,10 +127,6 @@ function highlightCursorBrackets(view: EditorView) {
 	const ranges = selection.ranges;
 	const text = view.state.doc.toString();
 	const ctx = Context.fromView(view);
-
-	if (!ctx.mode.inMath()) {
-		return Decoration.none;
-	}
 
 	const bounds = ctx.getBounds(selection.main.to);
 	if (!bounds) return Decoration.none;
