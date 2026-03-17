@@ -1,7 +1,8 @@
 import esbuild from "esbuild";
 import process from "process";
+import path from "path";
+import { readFile } from "fs/promises";
 import builtins from "builtin-modules";
-import inlineImportPlugin from "esbuild-plugin-inline-import";
 
 const banner =
 `/*
@@ -37,6 +38,64 @@ const external = [
 	...builtins
 ];
 
+function toPosixPath(value) {
+	return value.split(path.sep).join("/");
+}
+
+/**
+ * The upstream inline-import plugin uses the absolute resolved file path as the
+ * module id. esbuild then copies that path into generated bundle comments,
+ * leaking local machine paths. This local replacement keeps the absolute path
+ * in pluginData for file loading, but exposes only a repo-relative virtual path
+ * to esbuild.
+ */
+function createInlineImportPlugin(options = {}) {
+	const {
+		filter = /^inline:/,
+		namespace = "inline-import",
+		transform = async (contents) => contents
+	} = options;
+
+	return {
+		name: "inline-import-sanitized",
+		setup(build) {
+			build.onResolve({ filter }, (args) => {
+				const requestPath = args.path.replace(filter, "");
+				const absolutePath = path.resolve(args.resolveDir, requestPath);
+				const relativePath = toPosixPath(path.relative(process.cwd(), absolutePath));
+
+				return {
+					path: `inline:${relativePath}`,
+					namespace,
+					pluginData: {
+						absolutePath
+					}
+				};
+			});
+
+			build.onLoad({ filter: /.*/, namespace }, async (args) => {
+				const absolutePath = args.pluginData?.absolutePath;
+				if (typeof absolutePath !== "string") {
+					throw new Error(`Missing absolute path for inline import '${args.path}'.`);
+				}
+
+				let contents = await readFile(absolutePath, "utf8");
+				if (typeof transform === "function") {
+					contents = await transform(contents, {
+						...args,
+						path: absolutePath
+					});
+				}
+
+				return {
+					contents,
+					loader: "text"
+				};
+			});
+		}
+	};
+}
+
 function createBuildArgs(format, outfile) {
 	return {
 		banner: {
@@ -52,7 +111,7 @@ function createBuildArgs(format, outfile) {
 		treeShaking: true,
 		outfile,
 		plugins: [
-			inlineImportPlugin()
+			createInlineImportPlugin()
 		]
 	};
 }
