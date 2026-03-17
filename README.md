@@ -1,4 +1,4 @@
-# (WIP) latex-suite-core
+# LaTeX Suite Core
 
 [Obsidian Latex Suite](https://github.com/artisticat1/obsidian-latex-suite) core functionality extracted as a CodeMirror 6 (CM6) extension, to be used as a dependency in other projects.
 
